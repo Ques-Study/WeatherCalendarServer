@@ -5,7 +5,6 @@ var Index = require('../controllers/Index');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   Index.run(req, res, next);
-  // res.render('index', { title: 'Express' });
 });
 
 module.exports = router;
