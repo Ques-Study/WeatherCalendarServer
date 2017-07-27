@@ -3,7 +3,7 @@ const anHourInMillisec = 60 * 60 * 1000;
 
 module.exports.scheduleWithHours = function(hours, callback) {
 	const normalizedHours = normalizeHours(hours);
-	scheduleWithNormalizedHours(normalizedHours, callback);
+	return scheduleWithNormalizedHours(normalizedHours, callback);
 }
 
 function normalizeHours(targetHours) {
@@ -26,15 +26,15 @@ function normalizeHour(targetHour) {
 }
 
 function scheduleWithNormalizedHours(hours, callback) {
-	hours.forEach(function(hour) {
-		const rule = createScheduleRuleWithHour(hour);
-		schedule.scheduleJob(rule, callback);
+	const rule = createScheduleRuleWithHours(hours);
+	return schedule.scheduleJob(rule, function() {
+		callback();
 	});
 }
 
-function createScheduleRuleWithHour(hour) {
+function createScheduleRuleWithHours(hours) {
 	const rule = new schedule.RecurrenceRule();
-	rule.hour = hour;
+	rule.hour = hours;
 	rule.minute = 0;
 
 	return rule;

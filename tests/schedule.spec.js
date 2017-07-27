@@ -14,17 +14,24 @@ describe('Job scheduler', function () {
 		resetMockClock();
 	})
   
-	it('should fire event on next midnight', function (done) {
-		const timeoutInMillisec = getTimeoutAfterHours(24);
-		jobScheduler.scheduleWithHours([0], function() {
+	it('should fire events at every 6 hours from midnight', function (done) {
+		const timeoutInMillisec = getTimeoutAfterHours(48);
+		const hours = [0, 6, 12, 18];
+		const job = jobScheduler.scheduleWithHours(hours, function() {
 			const currentHour = new Date().getHours();
-			currentHour.should.equal(0);
-			done();
+
+			const index = hours.indexOf(currentHour);
+			index.should.be.above(-1);
+
+			hours.splice(index, 1);
+			if (hours.length == 0) {
+				job.cancel();
+				done();
+			}
 		});
 		setTimeout(function() {
-			should.exist(null);
+			hours.should.be.empty();
 			job.cancel();
-			done();
 		}, timeoutInMillisec);
 
 		mockClock.tick(timeoutInMillisec);
@@ -40,7 +47,7 @@ function resetMockClock() {
 }
 
 function getTimeoutAfterHours(hours) {
-  const timeoutInHour = hours;
-  return timeoutInHour * anHourInMillisec;
+	const timeoutInHour = hours;
+	return timeoutInHour * anHourInMillisec;
 }
 
