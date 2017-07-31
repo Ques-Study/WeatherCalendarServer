@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const should = require('should');
 const jobScheduler = require('../models/job-scheduler');
-const anHourInMillisec = 60 * 60 * 1000;
+const AN_HOUR_IN_MILLISEC = 60 * 60 * 1000;
 
 var mockClock;
 
@@ -48,6 +48,6 @@ function resetMockClock() {
 
 function getTimeoutAfterHours(hours) {
 	const timeoutInHour = hours;
-	return timeoutInHour * anHourInMillisec;
+	return timeoutInHour * AN_HOUR_IN_MILLISEC;
 }
 
