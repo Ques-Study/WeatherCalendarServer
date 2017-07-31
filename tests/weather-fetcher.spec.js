@@ -10,4 +10,3 @@ describe("Weather fetcher", function() {
     });
   });
 });
- 
