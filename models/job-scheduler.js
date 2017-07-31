@@ -1,5 +1,5 @@
 const schedule = require('node-schedule');
-const anHourInMillisec = 60 * 60 * 1000;
+const AN_HOUR_IN_MILLISEC = 60 * 60 * 1000;
 
 module.exports.scheduleWithHours = function(hours, callback) {
 	const normalizedHours = normalizeHours(hours);
@@ -42,12 +42,12 @@ function createScheduleRuleWithHours(hours) {
 
 function getTimeoutAfterHour(hour) {
 	const timeoutInHour = hour;
-	return timeoutInHour * anHourInMillisec;
+	return timeoutInHour * AN_HOUR_IN_MILLISEC;
 }
 
 function createDateAfterHour(hour) {
 	const date = new Date();
-	return new Date(date.getTime() + hour * anHourInMillisec);
+	return new Date(date.getTime() + hour * AN_HOUR_IN_MILLISEC);
 }
 
 function resetDateBelowHour(date) {
