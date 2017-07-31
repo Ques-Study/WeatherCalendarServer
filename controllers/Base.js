@@ -1,7 +1,7 @@
 const _ = require('underscore');
 
 module.exports = {
-	name: 'base',
+	name: "base",
 	extend: function(child) {
 		return _.extend({}, this, child);
 	},
