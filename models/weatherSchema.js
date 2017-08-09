@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 
 const weatherSchema = mongoose.Schema({
-  minTem : Number,
-  maxTem : Number, 
-  windSpeed : Number,
-  humidity : Number,
-  weather : String
+  date: Date,
+  weathers: [{
+    hour: Number,
+    temperature: Number,
+    skyCode: Number,
+    rainfallCode: Number,
+    rainfallProbability: Number
+  }]
 });
 
 module.exports = mongoose.model('Weather', weatherSchema);
