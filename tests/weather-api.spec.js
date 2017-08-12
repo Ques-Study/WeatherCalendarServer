@@ -30,8 +30,9 @@ describe("Weather fetcher", function() {
   });
 
   it('Weather data filtered and parsed saved in mongoose', function() {
-    return weatherApi.addWeather(weatherArray).then(function(result) {
+    return weatherApi.addWeather(weatherArray).then(function(result){
       should.exist(result);
-    })
+      result.should.have.properties("tomorrow");
+    });
   })
 });

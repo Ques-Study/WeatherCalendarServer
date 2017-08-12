@@ -18,25 +18,32 @@ module.exports.fetch = function() {
 }
 
 module.exports.addWeather = function(weatherResponse) {
-    return new Promise(function(resolve, reject) {
-        const todaysWeatherJson = filterWeatherJsonByDay(weatherResponse, 0);
-        const tomorrowsWeatherJson = filterWeatherJsonByDay(weatherResponse, 1);
-        var todaysWeather = parseWeather(todaysWeatherJson);
-        var tomorrowsWeather = parseWeather(tomorrowsWeatherJson);
-        tomorrowsWeather.save(function(err, tomorrowSaveResult){
-            if(err){
-                reject(err);
-            }
-            if(todaysWeather){
-                todaysWeather.save(function(err, todaySaveResult){
-                    if(err){
-                        console.log("There is no today weather");
-                    }
-                    resolve(saveResult + "," + todaySaveResult);
-                })
-            }
-            resolve(tomorrowSaveResult);
+    return new Promise(function(resolve, reject){
+    const todaysWeatherJson = filterWeatherJsonByDay(weatherResponse, 0);
+    const tomorrowsWeatherJson = filterWeatherJsonByDay(weatherResponse, 1);
+    var todaysWeather = parseWeather(todaysWeatherJson);
+    var tomorrowsWeather = parseWeather(tomorrowsWeatherJson);
+    saveWeather(tomorrowsWeather).then(function(tomorrowresult){
+        saveWeather(todaysWeather).then(function(todayresult){
+            resolve({"today":todayresult, "tomorrow":tomorrowresult})
+        });
+        resolve({"tomorrow":tomorrowresult});
+    })
+        .catch(function(error){
+            reject(error);
         })
+    })
+}
+
+function saveWeather(weather){
+    return new Promise(function(resolve, reject){
+        if(weather){
+            weather.save(function(err, result){
+                if(err) reject(err);
+                resolve(result);
+            })
+            
+        }
     })
 }
 
