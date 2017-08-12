@@ -1,4 +1,5 @@
 const should = require('should');
+const mongoose = require('mongoose');
 const weatherApi = require('../models/weather-api.js');
 const FORECAST_COUNT_PER_DAY = 8;
 const KEYS_OF_OBJECT_IN_WEATHER_ARRAY = ["hour", "day", "temp", "sky", "pty", "pop"];
@@ -27,4 +28,10 @@ describe("Weather fetcher", function() {
     }, this);
     done();
   });
+
+  it('Weather data filtered and parsed saved in mongoose', function() {
+    return weatherApi.addWeather(weatherArray).then(function(result) {
+      should.exist(result);
+    })
+  })
 });
