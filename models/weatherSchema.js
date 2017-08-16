@@ -4,7 +4,7 @@ const weatherSchema = mongoose.Schema({
   date: Date,
   weathers: [{
     hour: Number,
-    temperature: Number,
+    temp: Number,
     skyCode: Number,
     rainfallCode: Number,
     rainfallProbability: Number

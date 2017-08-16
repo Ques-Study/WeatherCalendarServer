@@ -1,38 +1,27 @@
 const should = require('should');
 const mongoose = require('mongoose');
 const weatherApi = require('../models/weather-api.js');
+const Weather = require('../models/weatherSchema.js');
 const FORECAST_COUNT_PER_DAY = 8;
-const KEYS_OF_OBJECT_IN_WEATHER_ARRAY = ["hour", "day", "temp", "sky", "pty", "pop"];
-
+const FILTER_KEYS = weatherApi.FILTER_KEYS;
 
 describe("Weather fetcher", function() {
-  var weatherArray = [];
-
-  before(function() {
-    return weatherApi.fetch().then(function(data) {
-      weatherArray = data;
-    })
-  });
-
-  it('promise return value should exist', function(done) {
-    should.exist(weatherArray);
-    weatherArray.length.should.be.aboveOrEqual(FORECAST_COUNT_PER_DAY);
-    done();
-  });
-
-  it('Every element in Array has remanded keys and values', function(done) {
-    weatherArray.forEach(function(weatherElement) {
-      KEYS_OF_OBJECT_IN_WEATHER_ARRAY.forEach(function(key) {
-        weatherElement.should.have.properties(key);  
-      }, this);
-    }, this);
-    done();
-  });
-
-  it('Weather data filtered and parsed saved in mongoose', function() {
-    return weatherApi.addWeather(weatherArray).then(function(result){
-      should.exist(result);
-      result.should.have.properties("tomorrow");
+  it('Every weather should have keys and values', function() {
+    return weatherApi.fetch()
+    .then(function(weatherObject) {
+      console.log(weatherObject);
+      should.exist(weatherObject);
+      checkWeathersHaveProperties(weatherObject);
     });
-  })
+  });
 });
+
+function checkWeathersHaveProperties(weatherObject){  
+  weatherObject.forEach(function(dailyWeatherObject) {
+    dailyWeatherObject["weathers"].forEach(function(weather){
+      var weatherKey = Object.keys(weather._doc);
+      var schemaKey = Object.keys(Weather.schema.obj.weathers[0]);
+        weatherKey.should.containDeep(schemaKey);
+    }, this);   
+  }, this)
+}
