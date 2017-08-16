@@ -25,7 +25,7 @@ function selectAndFilterJSON(data){
 
 function filterWeatherJsons(weatherJsons) {
     var jsonGroupedByDay = filterWeatherJsonByDay(weatherJsons.map(filterWeatherJson));
-    return jsonToWeather(jsonGroupedByDay);    
+    return convertJsonToWeather(jsonGroupedByDay);    
 }
 
 function filterWeatherJson(weatherJson) {
@@ -36,7 +36,7 @@ function filterWeatherJson(weatherJson) {
     return filteredWeatherJson;
 }
 
-function jsonToWeather(jsonGroupedByDay){
+function convertJsonToWeather(jsonGroupedByDay){
     var weatherObjectByDay = [];
     Object.keys(jsonGroupedByDay).forEach(function(key) {
         weatherObjectByDay.push(parseWeather(jsonGroupedByDay[key]));
@@ -46,7 +46,7 @@ function jsonToWeather(jsonGroupedByDay){
 
 function filterWeatherJsonByDay(weatherJson) {
     var filterWeatherJsons = {};
-        weatherJson.filter(function(weatherElement) {
+        weatherJson.forEach(function(weatherElement) {
             if (!filterWeatherJsons[weatherElement.day]){
                 filterWeatherJsons[weatherElement.day] = [];
                 filterWeatherJsons[weatherElement.day].push(weatherElement);

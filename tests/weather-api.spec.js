@@ -9,7 +9,6 @@ describe("Weather fetcher", function() {
   it('Every weather should have keys and values', function() {
     return weatherApi.fetch()
     .then(function(weatherObject) {
-      console.log(weatherObject);
       should.exist(weatherObject);
       checkWeathersHaveProperties(weatherObject);
     });
