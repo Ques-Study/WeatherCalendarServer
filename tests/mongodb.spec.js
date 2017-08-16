@@ -11,6 +11,7 @@ describe("MongoDB", function() {
 
   it("should be able to connect to db", function(done) {
     // TODO: Refactor dependency
+    mongoose.Promise = global.Promise;
     this.connection = mongoose.connect('mongodb://localhost:27017/worktest', function(err, db) {
       should.not.exist(err);
       done();
