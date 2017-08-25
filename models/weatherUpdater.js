@@ -8,7 +8,7 @@ module.exports.updateWeatherData = function(weather) {
 }
 
 function saveWeather(newWeatherObject) {
-  const date = dailyWeatherObject.date;
+  const date = newWeatherObject.date;
   Weather.findOne({ date: date }, function(err, oldWeatherObject){
     if (err) {
       console.log("There is an error while reading weather list from database.");
@@ -30,7 +30,7 @@ function saveWeather(newWeatherObject) {
         }
       });
     } else {
-      newWeatherObject.save(function(err){
+      newWeatherObject.save(function(err, data){
         if(err){
           console.log("There is an error while saveing new weather informations.");
         } else {

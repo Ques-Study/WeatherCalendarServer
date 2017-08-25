@@ -9,27 +9,30 @@ describe("MongoDB", function() {
     }
   });
 
-  it("should be able to connect to db", function(done) {
+  it("should be able to connect to db", function() {
     // TODO: Refactor dependency
     mongoose.Promise = global.Promise;
     this.connection = mongoose.connect('mongodb://localhost:27017/worktest', function(err, db) {
       should.not.exist(err);
-      done();
     });
   });
 
-  it("should save and load weather", function (done) {
+  it("should save and load weather", function () {
     const weather = new Weather({
-      minTem : "21",
-      maxTem : "35",
-      windSpeed : "4",
-      humidity : "37",
-      weather : "sunny"
+      date: new Date(),
+      weathers: [{
+        hour: 6,
+        temp: 27,
+        skyCode: 0,
+        rainfallCode: 1,
+        rainfallProbability : 60,
+      }]
     });
     weather.save(function (err, out) {
       should.not.exist(err);
       should.equal(out, weather);
-      done();
     });
   });
 });
+
+
