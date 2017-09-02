@@ -9,15 +9,16 @@ describe("MongoDB", function() {
     }
   });
 
-  it("should be able to connect to db", function() {
+  it("should be able to connect to db", function(done) {
     // TODO: Refactor dependency
     mongoose.Promise = global.Promise;
     this.connection = mongoose.connect('mongodb://localhost:27017/worktest', function(err, db) {
       should.not.exist(err);
+      done();
     });
   });
 
-  it("should save and load weather", function () {
+  it("should save and load weather", function (done) {
     const weather = new Weather({
       date: new Date(),
       weathers: [{
@@ -31,8 +32,9 @@ describe("MongoDB", function() {
     weather.save(function (err, out) {
       should.not.exist(err);
       should.equal(out, weather);
+      done();
     });
   });
-});
 
+});
 

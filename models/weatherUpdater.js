@@ -2,41 +2,67 @@ const Weather = require("./weatherSchema");
 const weatherApi = require("./weather-api");
 
 module.exports.updateWeatherData = function(weather) {
-  weather.forEach(function(day) {
-    saveWeather(day);
+  return new Promise(function(resolve, reject) {
+    var savedCount = 0;
+    for (var i = 0; i < weather.length; i++) {
+      updateWeather(weather[i], function(err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (weather.length == ++savedCount) {
+          resolve();
+        }
+      });
+    }
   });
 }
 
-function saveWeather(newWeatherObject) {
-  const date = newWeatherObject.date;
-  Weather.findOne({ date: date }, function(err, oldWeatherObject){
+function updateWeather(dailyWeather, callback) {
+  Weather.findOne({ date: dailyWeather.date }, function(err, oldWeather){
     if (err) {
-      console.log("There is an error while reading weather list from database.");
+      console.log("db err");
     }
-    if(oldWeatherObject){
-      const oldWeathersLength = oldWeatherObject.weathers.length - newWeatherObject.weather.length;
-      const updatedWeathers = [];
-      for(var i = 0; i<oldWeathersLength; i++){
-        updatedWeathers.push(oldWeatherObject.weathers[i]);
-      }
-      newWeatherObject.weathers.forEach(function(newWeather) {
-        updatedWeathers.push(newWeather);
-      });
-      Weather.update({ date: date }, { $set: { weathers: updatedWeathers }}, function(err) {
-        if(err){
-          console.log("There is an error while updating weather informations.");
-        } else {
-        console.log("Weather informations updated.");
-        }
-      });
+    if(!oldWeather){
+      saveNewDailyWeathers(dailyWeather);
+			callback(err);
     } else {
-      newWeatherObject.save(function(err, data){
-        if(err){
-          console.log("There is an error while saveing new weather informations.");
-        } else {
-        console.log("New weather informations saved.");
-        }
-      });
+      updateHourlyWeather(oldWeather, dailyWeather);
+			callback(err);
     }
   });
-};
+}
+
+function saveNewDailyWeathers(newDailyWeather) {
+	newDailyWeather.save(function(err) {
+		if(err) {
+		  console.log("Save err");
+		} else {
+      console.log("Weather saved");
+		}
+	});
+}
+
+function updateHourlyWeather(oldWeather, newWeather) {
+	const date = newWeather.date
+	const updatedWeathers = setUpdatedWeatherArray(oldWeather, newWeather);
+	Weather.update({ date: date }, { $set: { weathers: updatedWeathers }}, function(err) {
+		if(err) {
+			console.log("Update err");
+		} else {
+			console.log("Weather updated");
+		}
+	});
+}
+
+function setUpdatedWeatherArray(oldWeatherObject, newWeatherObject) {
+	const oldWeathersArrayLength = oldWeatherObject.weathers.length - newWeatherObject.weathers.length;
+	const updatedWeathers = [];
+	for(var i = 0; i<oldWeathersArrayLength; i++) {
+		updatedWeathers.push(oldWeather.weathers[i]);
+	}
+	newWeatherObject.weathers.forEach(function(newWeather) {
+		updatedWeathers.push(newWeather);
+	});
+	return updatedWeathers;
+}

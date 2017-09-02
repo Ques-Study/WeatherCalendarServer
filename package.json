@@ -7,21 +7,22 @@
     "test": "node_modules/.bin/mocha tests/*"
   },
   "dependencies": {
+    "async": "^2.5.0",
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
     "debug": "^2.6.8",
-    "ejs": "~2.5.6",
-    "express": "~4.15.2",
-    "mongoose": "^4.11.4",
+    "ejs": "^2.5.7",
+    "express": "^4.15.4",
+    "mongoose": "^4.11.8",
     "morgan": "~1.8.1",
+    "node-schedule": "^1.2.4",
     "restler": "^3.4.0",
     "serve-favicon": "~2.4.2",
     "underscore": "^1.8.3",
-    "xml2json": "^0.11.0",
-    "node-schedule": "^1.2.3"
+    "xml2json": "^0.11.0"
   },
   "devDependencies": {
-    "mocha": "^3.4.2",
+    "mocha": "^3.5.0",
     "should": "^11.2.1",
     "sinon": "^2.3.8"
   }
