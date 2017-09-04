@@ -16,6 +16,7 @@
     "mongoose": "^4.11.8",
     "morgan": "~1.8.1",
     "node-schedule": "^1.2.4",
+    "npm": "^5.4.0",
     "restler": "^3.4.0",
     "serve-favicon": "~2.4.2",
     "underscore": "^1.8.3",
