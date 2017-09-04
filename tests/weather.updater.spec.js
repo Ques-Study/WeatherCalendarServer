@@ -94,7 +94,7 @@ function createDummyWeather(day, hourBase, hourCount) {
 		});
 	}
 
-return weather;
+	return weather;
 
 }
 
