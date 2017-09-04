@@ -2,44 +2,44 @@ const Weather = require("./weatherSchema");
 const weatherApi = require("./weather-api");
 
 module.exports.updateWeather = function(weathers) {
-  return new Promise(function(resolve, reject) {
-    var savedCount = 0;
-    for (var i = 0; i < weathers.length; i++) {
-      updateWeather(weathers[i], function(err) {
-        if (err) {
-          reject(err);
-          return;
-        }
-        if (weathers.length == ++savedCount) {
-          resolve();
-        }
-      });
-    }
-  });
+	return new Promise(function(resolve, reject) {
+		var savedCount = 0;
+		for (var i = 0; i < weathers.length; i++) {
+			updateWeather(weathers[i], function(err) {
+				if (err) {
+					reject(err);
+					return;
+				}
+				if (weathers.length == ++savedCount) {
+					resolve();
+				}
+			});
+		}
+	});
 }
 
 function updateWeather(dailyWeather, callback) {
-  Weather.findOne({ date: dailyWeather.date }, function(err, oldWeather){
-    if (err) {
-      console.log("db err");
+	Weather.findOne({ date: dailyWeather.date }, function(err, oldWeather){
+		if (err) {
+			console.log("db err");
 			callback(err);
 			return;
-    }
-    if(!oldWeather){
-      saveNewDailyWeathers(dailyWeather, callback);
-    } else {
-      updateHourlyWeather(oldWeather, dailyWeather, callback);
-    }
-  });
+		}
+		if(!oldWeather){
+			saveNewDailyWeathers(dailyWeather, callback);
+		} else {
+			updateHourlyWeather(oldWeather, dailyWeather, callback);
+		}
+	});
 }
 
 function saveNewDailyWeathers(newDailyWeather, callback) {
 	newDailyWeather.save(function(err) {
 		if(err) {
-		  console.log("Save err");
-  		callback(err);
+			console.log("Save err");
+			callback(err);
 		} else {
-      console.log("Weather saved");
+			console.log("Weather saved");
 			callback();
 		}
 	});
@@ -51,7 +51,7 @@ function updateHourlyWeather(oldWeather, newWeather, callback) {
 	Weather.update({ date: date }, { $set: { weathers: updatedWeathers }}, function(err) {
 		if(err) {
 			console.log("Update err");
-  		callback(err);
+			callback(err);
 		} else {
 			console.log("Weather updated");
 			callback();
@@ -63,7 +63,7 @@ function getUpdatedHourlyWeathers(oldWeather, newWeather) {
 	if (newWeather.weathers.length == 0) {
 		return oldWeather.weathers;
 	}
-	
+
 	const firstHourOfNewWeather = newWeather.weathers[0].hour;
 	var updatedHourlyWeathers = [];
 	var oldHourlyWeathers = oldWeather.weathers.filter(function(weather) {
@@ -75,7 +75,7 @@ function getUpdatedHourlyWeathers(oldWeather, newWeather) {
 	newWeather["weathers"].forEach(function(newHourlyWeather) {
 		updatedHourlyWeathers.push(newHourlyWeather);
 	});
-
+	
 	return updatedHourlyWeathers;
 }
 

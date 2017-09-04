@@ -3,19 +3,19 @@ const mongoose = require('mongoose');
 const Weather = require("../models/weatherSchema");
 
 describe("MongoDB", function() {
-	before(function(done) {
+  before(function(done) {
     mongoose.Promise = global.Promise;
     this.connection = mongoose.connect('mongodb://localhost:27017/worktest', function(err, db) {
       should.not.exist(err);
       done();
     });
-	});
+  });
 
-	after(function(done) {
-		mongoose.disconnect(function() {
-			done();
-		});
-	});
+  after(function(done) {
+    mongoose.disconnect(function() {
+      done();
+    });
+  });
 
   afterEach(function() {
     if (this.connection != 'undefined') {
