@@ -1,10 +1,10 @@
 const should = require('should');
 const mongoose = require('mongoose');
 const Weather = require("../models/weatherSchema");
-const weatherUpdater = require("../models/weatherUpdater");
+const weatherUtils = require("../models/weather-utils");
 const weatherApi = require("../models/weather-api");
 
-describe('Weather Updater', function() {
+describe('Weather Utils', function() {
 	before(function(done) {
 		mongoose.Promise = global.Promise;
 		this.connection = mongoose.connect('mongodb://localhost:27017/worktest', function(err, db) {
@@ -27,11 +27,11 @@ describe('Weather Updater', function() {
 
 	it('should update weather', function(done) {
 		const weather = createDummyWeather(0, 0, 8);
-		weatherUpdater.updateWeather([weather]).then(function(err) {
+		weatherUtils.saveWeathers([weather]).then(function(err) {
 			should.not.exist(err);
 			Weather.findOne({ date: weather.date }, function(err, weatherFound) {
 				should.not.exist(err);
-				compare(weatherFound, weather);
+				assertEquals(weatherFound, weather);
 				done();
 			});
 		});
@@ -41,22 +41,22 @@ describe('Weather Updater', function() {
 		const firstWeather = createDummyWeather(0, 0, 5);
 		const secondWeather = createDummyWeather(0, 1, 5);
 		const weather = createDummyWeather(0, 0, 6);
-		weatherUpdater.updateWeather([firstWeather]).then(function(err) {
+		weatherUtils.saveWeathers([firstWeather]).then(function(err) {
 			should.not.exist(err);
-			weatherUpdater.updateWeather([secondWeather]).then(function(err) {
+			return weatherUtils.saveWeathers([secondWeather]);
+		}).then(function(err) {
+			should.not.exist(err);
+			Weather.findOne({ date: firstWeather.date }, function(err, updatedWeather) {
 				should.not.exist(err);
-				Weather.findOne({ date: firstWeather.date }, function(err, updatedWeather) {
-					should.not.exist(err);
-					compare(updatedWeather, weather);
-					done();
-				});
+				assertEquals(updatedWeather, weather);
+				done();
 			});
 		});
 	});
 
 });
 
-function compare(lhs, rhs) {
+function assertEquals(lhs, rhs) {
 	should.equal(lhs.date.getTime(), rhs.date.getTime());
 	should.equal(lhs.weathers.length, rhs.weathers.length);
 	lhs.weathers.forEach(function(weather, index) {
@@ -93,8 +93,6 @@ function createDummyWeather(day, hourBase, hourCount) {
 			rainfallProbability: hourBase + i + day
 		});
 	}
-
 	return weather;
-
 }
 

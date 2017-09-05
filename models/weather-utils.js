@@ -1,11 +1,11 @@
 const Weather = require("./weatherSchema");
 const weatherApi = require("./weather-api");
 
-module.exports.updateWeather = function(weathers) {
+module.exports.saveWeathers = function(weathers) {
 	return new Promise(function(resolve, reject) {
 		var savedCount = 0;
 		for (var i = 0; i < weathers.length; i++) {
-			updateWeather(weathers[i], function(err) {
+			saveOrUpdateWeather(weathers[i], function(err) {
 				if (err) {
 					reject(err);
 					return;
@@ -18,42 +18,37 @@ module.exports.updateWeather = function(weathers) {
 	});
 }
 
-function updateWeather(dailyWeather, callback) {
+function saveOrUpdateWeather(dailyWeather, callback) {
 	Weather.findOne({ date: dailyWeather.date }, function(err, oldWeather){
 		if (err) {
-			console.log("db err");
 			callback(err);
 			return;
 		}
 		if(!oldWeather){
-			saveNewDailyWeathers(dailyWeather, callback);
+			saveWeather(dailyWeather, callback);
 		} else {
-			updateHourlyWeather(oldWeather, dailyWeather, callback);
+			updateWeather(oldWeather, dailyWeather, callback);
 		}
 	});
 }
 
-function saveNewDailyWeathers(newDailyWeather, callback) {
-	newDailyWeather.save(function(err) {
+function saveWeather(weather, callback) {
+	weather.save(function(err) {
 		if(err) {
-			console.log("Save err");
 			callback(err);
 		} else {
-			console.log("Weather saved");
 			callback();
 		}
 	});
 }
 
-function updateHourlyWeather(oldWeather, newWeather, callback) {
+function updateWeather(oldWeather, newWeather, callback) {
 	const date = newWeather.date
 	const updatedWeathers = getUpdatedHourlyWeathers(oldWeather, newWeather);
 	Weather.update({ date: date }, { $set: { weathers: updatedWeathers }}, function(err) {
 		if(err) {
-			console.log("Update err");
 			callback(err);
 		} else {
-			console.log("Weather updated");
 			callback();
 		}
 	});
