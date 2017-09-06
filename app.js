@@ -51,16 +51,17 @@ app.use(function(err, req, res, next) {
 // TODO: Consider adding logger to project
 mongooseUtils.connect().then(function(db) {
   jobScheduler.scheduleWithHours([0, 12], function() {
-    console.log("Job fired at: " + new Date().getTime());
+    console.log("Job fired at: " + new Date());
     weatherAPI.fetch().then(function(weathers) {
       return weatherUtils.saveWeathers(weathers);
     }).then(function() {
       console.log("Saved.");
     }).catch(function(err) {
       console.log(err);
-      return;
     });
   });
+}).catch(function(err) {
+  console.log("Error occurred while connecting to database: " + err);
 });
 
 module.exports = app;
