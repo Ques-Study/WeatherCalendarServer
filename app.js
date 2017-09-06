@@ -8,6 +8,11 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+const mongooseUtils = require('./models/mongoose-utils');
+const jobScheduler = require('./models/job-scheduler');
+const weatherAPI = require('./models/weather-api');
+const weatherUtils = require('./models/weather-utils');
+
 var app = express();
 
 // view engine setup
@@ -41,6 +46,21 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+// TODO: Consider adding logger to project
+mongooseUtils.connect().then(function(db) {
+  jobScheduler.scheduleWithHours([0, 12], function() {
+    console.log("Job fired at: " + new Date().getTime());
+    weatherAPI.fetch().then(function(weathers) {
+      return weatherUtils.saveWeathers(weathers);
+    }).then(function() {
+      console.log("Saved.");
+    }).catch(function(err) {
+      console.log(err);
+      return;
+    });
+  });
 });
 
 module.exports = app;
