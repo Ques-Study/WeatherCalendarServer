@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  wc_web:
+    image: crowjdh/wcweb:latest
+    container_name: wc
+    expose:
+      - "3000"
+      - "22"
+    depends_on:
+      - wc_mongo
+    networks:
+      - front_tier
+      - mongo
+    stdin_open: true
+    tty: true
+    privileged: true
+
+  wc_mongo:
+    image: mongo:latest
+    container_name: wc_mongo
+    networks:
+      - mongo
+
+networks:
+  front_tier:
+    driver: bridge
+  mongo:
+    driver: bridge
