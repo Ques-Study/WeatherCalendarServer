@@ -7,7 +7,7 @@ const weatherApi = require("../models/weather-api");
 describe('Weather Utils', function() {
 	before(function(done) {
 		mongoose.Promise = global.Promise;
-		this.connection = mongoose.connect('mongodb://localhost:27017/worktest', function(err, db) {
+		this.connection = mongoose.connect('mongodb://localhost:27017/worktest', { useMongoClient: true }, function(err, db) {
 			should.not.exist(err);
 			done();
 		});
