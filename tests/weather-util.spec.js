@@ -2,7 +2,6 @@ const should = require('should');
 const mongoose = require('mongoose');
 const Weather = require("../models/weatherSchema");
 const weatherUtils = require("../models/weather-utils");
-const weatherApi = require("../models/weather-api");
 
 describe('Weather Utils', function() {
 	before(function(done) {
@@ -53,11 +52,24 @@ describe('Weather Utils', function() {
 			});
 		});
 	});
+	
+	it('should load weather query', function(done) {
+		const weather = createDummyWeather(0, 0, 6);
+		weatherUtils.saveWeathers([weather]).then(function(err) {
+			should.not.exist(err);
+			weatherUtils.loadWeatherQuery(weather.date, weather.zoneCode).exec(function(err, data) {
+				should.not.exist(err);
+				assertEquals(weather, data);
+				done();
+			});
+		});
+	});
 
 });
 
 function assertEquals(lhs, rhs) {
 	should.equal(lhs.date.getTime(), rhs.date.getTime());
+	should.equal(lhs.zoneCode, rhs.zoneCode);
 	should.equal(lhs.weathers.length, rhs.weathers.length);
 	lhs.weathers.forEach(function(weather, index) {
 		otherWeather = rhs.weathers[index];
@@ -69,20 +81,11 @@ function assertEquals(lhs, rhs) {
 	});
 }
 
-function checkWeathersHaveProperties (weathersArray) {
-	weathersArray.forEach(function(weatherObject) {
-		weatherObject["weathers"].forEach(function(weathers) {
-			var weatherKey = Object.keys(weathers._doc);
-			var schemaKey = Object.keys(Weather.schema.obj.weathers[0]);
-			weatherKey.should.containDeep(schemaKey);
-		}, this);
-	}, this);
-}
-
 function createDummyWeather(day, hourBase, hourCount) {
 	var date = new Date(0, 0, day);
 	const weather = new Weather({
-		date: date
+		date: date,
+		zoneCode: 123456
 	});
 	for (var i = 0; i < hourCount; i++) {
 		weather.weathers.push({
