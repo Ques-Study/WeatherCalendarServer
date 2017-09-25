@@ -7,7 +7,8 @@ const FILTER_KEYS = weatherApi.FILTER_KEYS;
 
 describe("Weather fetcher", function() {
   it('Every weather should have keys and values', function() {
-    return weatherApi.fetch()
+    var bokHyunCode = 2723067100;
+    return weatherApi.fetch(bokHyunCode)
     .then(function(weatherObject) {
       should.exist(weatherObject);
       checkWeathersHaveProperties(weatherObject);
@@ -22,5 +23,5 @@ function checkWeathersHaveProperties(weatherObject){
       var schemaKey = Object.keys(Weather.schema.obj.weathers[0]);
         weatherKey.should.containDeep(schemaKey);
     }, this);   
-  }, this)
+  }, this);
 }
