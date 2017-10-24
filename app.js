@@ -52,9 +52,20 @@ app.use(function(err, req, res, next) {
 
 // TODO: Consider adding logger to project
 mongooseUtils.connect().then(function(db) {
+  // TODO: Remove below when test is finished
+  /*
+  weatherAPI.fetch("2723067100")
+  .then(function(weathers) {
+    weatherUtils.saveWeathers(weathers);
+  }).then(function() {
+    console.log("done")
+  }).catch(function(err) {
+    console.log(err);
+  });
+  */
   jobScheduler.scheduleWithHours([0, 12], function() {
     console.log("Job fired at: " + new Date());
-    weatherAPI.fetch().then(function(weathers) {
+    weatherAPI.fetch("2723067100").then(function(weathers) {
       return weatherUtils.saveWeathers(weathers);
     }).then(function() {
       console.log("Saved.");
