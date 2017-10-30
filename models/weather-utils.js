@@ -16,20 +16,28 @@ module.exports.saveWeathers = function(weathers) {
 		}
 	});
 };
-module.exports.loadWeatherQuery = function(date, zoneCode) {
-	var weatherQuery = Weather.findOne({ date: date, zoneCode: zoneCode});
-	return weatherQuery;
+
+module.exports.loadWeather = function(date, zoneCode) {
+	return new Promise(function(resolve, reject) {
+		Weather.findOne({ date: date, zoneCode: zoneCode }).exec(function(err, weather) {
+			if(err) {
+				reject(err);
+				return;
+			}
+			resolve(weather);
+		});
+	});
 };
 
-module.exports.reformWeather = function(weather) {
-	var date = JSON.stringify(weather.date);
+module.exports.convertWeatherToClientWeatherAPIResponse = function(weather) {
+	var date = weather.date;
 	var hourlyWeathers = weather.weathers;
 	var reformedHourlyWeathers = [];
 	hourlyWeathers.forEach(function(hourlyWeather) {
 		var reformedHourlyWeather = {
-			time: hourlyWeather.hour+":00",
-			temp: hourlyWeather.temp+"℃",
-			rainfall: hourlyWeather.rainfallProbability+"%",
+			time: hourlyWeather.hour,
+			temp: hourlyWeather.temp,
+			pRainfall: hourlyWeather.rainfallProbability,
 			sCode: hourlyWeather.skyCode,
 			rCode: hourlyWeather.rainfallCode
 		};
@@ -38,7 +46,7 @@ module.exports.reformWeather = function(weather) {
 	var reformedWeather = {
 		zCode: weather.zoneCode,
 		weather: {
-			day: date.slice(1,11),
+			day: date.getTime(),
 			weathers: reformedHourlyWeathers
 		}
 	};
@@ -46,7 +54,7 @@ module.exports.reformWeather = function(weather) {
 };
 
 function saveOrUpdateWeather(dailyWeather, callback) {
-	Weather.findOne({ date: dailyWeather.date }, function(err, oldWeather){
+	Weather.findOne({ date: dailyWeather.date, zoneCode: dailyWeather.zoneCode }, function(err, oldWeather){
 		if (err) {
 			callback(err);
 			return;

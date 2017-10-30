@@ -6,7 +6,7 @@ const weatherUtils = require("../models/weather-utils");
 describe('Weather Utils', function() {
 	before(function(done) {
 		mongoose.Promise = global.Promise;
-		this.connection = mongoose.connect('mongodb://localhost:27017/worktest', { useMongoClient: true }, function(err, db) {
+		this.connection = mongoose.connect('mongodb://wc_mongo:27017/worktest', { useMongoClient: true }, function(err, db) {
 			should.not.exist(err);
 			done();
 		});
@@ -24,7 +24,7 @@ describe('Weather Utils', function() {
 		}
 	});
 
-	it('should update weather', function(done) {
+	it('should insert weather', function(done) {
 		const weather = createDummyWeather(0, 0, 8);
 		weatherUtils.saveWeathers([weather]).then(function(err) {
 			should.not.exist(err);
@@ -53,11 +53,11 @@ describe('Weather Utils', function() {
 		});
 	});
 	
-	it('should load weather query', function(done) {
+	it('should load weather', function(done) {
 		const weather = createDummyWeather(0, 0, 6);
 		weatherUtils.saveWeathers([weather]).then(function(err) {
 			should.not.exist(err);
-			weatherUtils.loadWeatherQuery(weather.date, weather.zoneCode).exec(function(err, data) {
+			weatherUtils.loadWeather(weather.date, weather.zoneCode).then(function(data) {
 				should.not.exist(err);
 				assertEquals(weather, data);
 				done();

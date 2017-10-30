@@ -3,7 +3,7 @@ var router = express.Router();
 var Weathers = require('../controllers/Weathers');
 
 /* GET home page. */
-router.get('/weathers/:zoneCode', function(req, res, next) {
+router.get('/weathers/:zoneCode&:date', function(req, res, next) {
   Weathers.run(req, res, next);
 });
 
