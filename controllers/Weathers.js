@@ -15,7 +15,7 @@ module.exports = BaseController.extend({
 			return;
 		}
 		const date = convertDateToDbForm(reqDate);
-		weatherUtils.loadWeather(date, zoneCode).exec(function(err, weather) {
+		weatherUtils.loadWeather(date, zoneCode).then(function(err, weather) {
 			const refinedWeather = weatherUtils.convertWeatherToClientWeatherAPIResponse(weather);
 			res.jsonp(refinedWeather);
 		}).catch(function(err) {
