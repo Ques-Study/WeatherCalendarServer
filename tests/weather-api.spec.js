@@ -12,8 +12,6 @@ describe("Weather fetcher", function() {
     .then(function(weatherObject) {
       should.exist(weatherObject);
       checkWeathersHaveProperties(weatherObject);
-	  console.log(weatherObject);
-	  done();
     });
   });
 });
