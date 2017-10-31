@@ -5,7 +5,8 @@ const Weather = require("../models/weatherSchema");
 describe("MongoDB", function() {
 	before(function(done) {
 		mongoose.Promise = global.Promise;
-		this.connection = mongoose.connect('mongodb://wc_mongo:27017/worktest', { useMongoClient: true }, function(err, db) {
+		// TODO: Extract host value into environment
+		this.connection = mongoose.connect('mongodb://localhost:27017/worktest', { useMongoClient: true }, function(err, db) {
 			should.not.exist(err);
 			done();
 		});
