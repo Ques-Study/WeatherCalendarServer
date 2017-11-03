@@ -8,7 +8,7 @@ module.exports.FILTERING_KEYS = FILTER_KEYS;
 module.exports.fetch = function(zoneCode) {
     var url = "http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=";
     return new Promise(function(resolve, reject) {
-        rest.get(url+zoneCode)
+        rest.get(url + zoneCode)
         .on('complete', function(data) {
             if(data instanceof Error){
                 reject(error);
