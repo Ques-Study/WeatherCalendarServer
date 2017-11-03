@@ -5,14 +5,19 @@ const FILTER_KEYS = ["hour", "day", "temp", "sky", "pty", "pop"];
 
 module.exports.FILTERING_KEYS = FILTER_KEYS;
 
-module.exports.fetch = function() {
+module.exports.fetch = function(zoneCode) {
+    var url = "http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=";
     return new Promise(function(resolve, reject) {
-        rest.get('http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=2723067100')
+        rest.get(url + zoneCode)
         .on('complete', function(data) {
             if(data instanceof Error){
                 reject(error);
             } else {
-                resolve(selectAndFilterJSON(data));
+                var weatherJsons = selectAndFilterJSON(data);
+                weatherJsons.forEach(function(weatherJson) {
+                    weatherJson.zoneCode = zoneCode;
+                });
+                resolve(weatherJsons);
             }
         });
     });

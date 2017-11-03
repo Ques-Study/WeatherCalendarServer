@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const weatherSchema = mongoose.Schema({
 	date: Date,
+	zoneCode: Number,
 	weathers: [{
 		hour: Number,
 		temp: Number,

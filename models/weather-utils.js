@@ -1,5 +1,4 @@
 const Weather = require("./weatherSchema");
-const weatherApi = require("./weather-api");
 
 module.exports.saveWeathers = function(weathers) {
 	return new Promise(function(resolve, reject) {
@@ -16,10 +15,46 @@ module.exports.saveWeathers = function(weathers) {
 			});
 		}
 	});
-}
+};
+
+module.exports.loadWeather = function(date, zoneCode) {
+	return new Promise(function(resolve, reject) {
+		Weather.findOne({ date: date, zoneCode: zoneCode }).exec(function(err, weather) {
+			if(err) {
+				reject(err);
+				return;
+			}
+			resolve(weather);
+		});
+	});
+};
+
+module.exports.convertWeatherToClientWeatherAPIResponse = function(weather) {
+	var date = weather.date;
+	var hourlyWeathers = weather.weathers;
+	var reformedHourlyWeathers = [];
+	hourlyWeathers.forEach(function(hourlyWeather) {
+		var reformedHourlyWeather = {
+			time: hourlyWeather.hour,
+			temp: hourlyWeather.temp,
+			pRainfall: hourlyWeather.rainfallProbability,
+			sCode: hourlyWeather.skyCode,
+			rCode: hourlyWeather.rainfallCode
+		};
+		reformedHourlyWeathers.push(reformedHourlyWeather);
+	});
+	var reformedWeather = {
+		zCode: weather.zoneCode,
+		weather: {
+			day: date.getTime(),
+			weathers: reformedHourlyWeathers
+		}
+	};
+	return reformedWeather;
+};
 
 function saveOrUpdateWeather(dailyWeather, callback) {
-	Weather.findOne({ date: dailyWeather.date }, function(err, oldWeather){
+	Weather.findOne({ date: dailyWeather.date, zoneCode: dailyWeather.zoneCode }, function(err, oldWeather){
 		if (err) {
 			callback(err);
 			return;
@@ -43,7 +78,7 @@ function saveWeather(weather, callback) {
 }
 
 function updateWeather(oldWeather, newWeather, callback) {
-	const date = newWeather.date
+	const date = newWeather.date;
 	const updatedWeathers = getUpdatedHourlyWeathers(oldWeather, newWeather);
 	Weather.update({ date: date }, { $set: { weathers: updatedWeathers }}, function(err) {
 		if(err) {
