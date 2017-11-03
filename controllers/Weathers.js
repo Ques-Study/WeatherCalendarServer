@@ -11,11 +11,11 @@ module.exports = BaseController.extend({
 		const zoneCode = req.params.zoneCode;
 		const reqDate = req.params.date;
 		if (!isValidZoneCode(zoneCode)) {
-			respondError(res, 400, "ZONE_CODE: " + zoneCode + " is valid");
+			respondError(res, 400, "ZONE_CODE: " + zoneCode + " is invalid");
 			return;
 		}
 		if (!isValidReqDate(reqDate)) {
-			respondError(res, 400, "DATE: " + reqDate + " is valid");
+			respondError(res, 400, "DATE: " + reqDate + " is invalid");
 			return;
 		}
 		const date = convertDateToDbForm(reqDate);
@@ -23,7 +23,7 @@ module.exports = BaseController.extend({
 			const refinedWeather = weatherUtils.convertWeatherToClientWeatherAPIResponse(weather);
 			res.jsonp(refinedWeather);
 		}).catch(function(err) {
-			respondError(res, 404, "No matchin weather for ZONE_CODE: " + zoneCode + " and DATE: " + reqDate);
+			respondError(res, 404, "No matching weather for ZONE_CODE: " + zoneCode + " and DATE: " + reqDate);
 		});
 	}
 });
